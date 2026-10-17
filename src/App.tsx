@@ -1,9 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { supabase } from '@/lib/supabase'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [db, setDb] = useState('comprobando...')
+
+  useEffect(() => {
+    supabase
+      .from('items')
+      .select('id')
+      .limit(1)
+      .then(({ error }) => setDb(error ? `error: ${error.message}` : 'conectado'))
+  }, [])
 
   return (
     <main className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center gap-6 p-8">
@@ -13,6 +23,7 @@ function App() {
       <p className="text-muted-foreground">
         Base lista: Vite + React + Tailwind + shadcn + Supabase.
       </p>
+      <p className="text-sm" data-testid="db-status">Supabase: {db}</p>
       <Button onClick={() => setCount((c) => c + 1)} data-testid="counter">
         Clicks: {count}
       </Button>
